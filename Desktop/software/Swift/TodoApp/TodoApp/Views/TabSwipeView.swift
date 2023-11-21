@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct TabSwipeView: View {
-    @State private var picker = 0
+    @State private var picker = "Today"
+    @StateObject private var taskData = TaskData()
+
     var body: some View {
         
         NavigationStack {
@@ -16,33 +18,43 @@ struct TabSwipeView: View {
                 Picker("", selection: $picker) {
                     Text("Today")
                         .foregroundStyle(.white)
-                        .tag(0)
+                        .tag("Today")
                     Text("Upcomming")
                         .foregroundStyle(.white)
-                        .tag(1)
+                        .tag("Upcomming")
                     Text("Completed")
                         .foregroundStyle(.white)
-                        .tag(2)
+                        .tag("Completed")
                 }.pickerStyle(.segmented)
                     .padding()
                 
                 
                 TabView(selection: $picker) {
-                    TasksView()
-                        .tabItem { Image(systemName: "sun.min")  }.tag(0)
-                        .navigationTitle("Today")
-                    TasksView()
-                        .tabItem { Image(systemName: "arrow.up") }.tag(1)
-                        .navigationTitle("Upcomming")
-                    
-                    TasksView()
-                        .tabItem { Image(systemName: "checkmark") }.tag(2)
-                        .navigationTitle("Completed")
+                    TodayView()
+                        .tabItem { Image(systemName: "sun.min")  }.tag("Today")
+                    UpcommingView()
+                        .tabItem { Image(systemName: "arrow.up") }.tag("Upcomming")
+                        .environmentObject(taskData)
+                    CompletedView()
+                        .tabItem { Image(systemName: "checkmark") }.tag("Completed")
                     
                 }.tabViewStyle(.page)
+                    .navigationTitle(picker)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button {
+                                
+                            } label: {
+                                Image(systemName: "plus")
+                                    .foregroundStyle(.white)
+                                
+                            }
+                        }
+                    }
             }
                 .navigationBarTitleDisplayMode(.large)
                 .background(AppColor.background)
+                
                 
             
         }
