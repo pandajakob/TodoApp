@@ -11,6 +11,7 @@ struct TabSwipeView: View {
     @State private var picker = "Today"
     @StateObject private var taskData = TaskData()
 
+    @State private var newTask = Task()
     var body: some View {
         
         NavigationStack {
@@ -30,7 +31,7 @@ struct TabSwipeView: View {
                 
                 
                 TabView(selection: $picker) {
-                    TodayView()
+                    UndoneView()
                         .tabItem { Image(systemName: "sun.min")  }.tag("Today")
                     UpcommingView()
                         .tabItem { Image(systemName: "arrow.up") }.tag("Upcomming")
@@ -38,26 +39,30 @@ struct TabSwipeView: View {
                     CompletedView()
                         .tabItem { Image(systemName: "checkmark") }.tag("Completed")
                     
-                }.tabViewStyle(.page)
+                }
+                .padding(.bottom)
+                .tabViewStyle(.page)
                     .navigationTitle(picker)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                
+                            NavigationLink {
+                                ModifyTaskView(task: $newTask)
+                                    .navigationTitle("New Task")
                             } label: {
                                 Image(systemName: "plus")
                                     .foregroundStyle(.white)
-                                
                             }
                         }
                     }
-            }
+            }                       .ignoresSafeArea(edges: .bottom)
+
                 .navigationBarTitleDisplayMode(.large)
                 .background(AppColor.background)
                 
                 
             
         }
+
     }
 }
 
