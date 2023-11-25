@@ -8,11 +8,11 @@
 import Foundation
 import SwiftUI
 struct AppColor {
-    static let secondaryBG: Color = Color.black
+    static let secondaryBG: Color = Color.black.opacity(0.6)
     
     static let background: Color = Color(.sRGB,
                                          red: 11/255,
-                                         green: 119/255,
+                                         green: 132/255,
                                          blue: 231/255,
                                          opacity: 1)
     

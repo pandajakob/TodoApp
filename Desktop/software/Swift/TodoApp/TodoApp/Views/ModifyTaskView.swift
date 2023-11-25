@@ -10,15 +10,14 @@ import SwiftUI
 struct ModifyTaskView: View {
     @State private var description = ""
     @State private var repeatTask = false
-
+    
     @Binding var task: Task
     var body: some View {
+        NavigationStack {
             ZStack {
-                AppColor.background.ignoresSafeArea()
-                
                 Form {
                     Section("Description") {
-                        TextField("E.g. Go for a run 🏃‍♀️", text: $task.mainInformation.description)
+                        TextField("E.g. Go for a run 🏃‍♀️", text: $task.description)
                             .font(.headline)
                     }
                     Section("Date") {
@@ -39,9 +38,14 @@ struct ModifyTaskView: View {
                         
                         
                     }
-                    
-                }
+                        
+                }                 .scrollContentBackground(.hidden)
+                    .background(AppColor.secondaryBG)
+
+                
+
             }
+        }
     }
 }
 

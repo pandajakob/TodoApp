@@ -31,27 +31,33 @@ struct TabSwipeView: View {
                 
                 
                 TabView(selection: $picker) {
-                    UndoneView()
+                    TodoView()
                         .tabItem { Image(systemName: "sun.min")  }.tag("Today")
-                    UpcommingView()
+                        .environmentObject(taskData)
+
+                    UpcommingView(showCompletedTasks: false)
                         .tabItem { Image(systemName: "arrow.up") }.tag("Upcomming")
                         .environmentObject(taskData)
-                    CompletedView()
+                    UpcommingView(showCompletedTasks: true)
                         .tabItem { Image(systemName: "checkmark") }.tag("Completed")
-                    
+                        .environmentObject(taskData)
+
                 }
                 .padding(.bottom)
                 .tabViewStyle(.page)
                     .navigationTitle(picker)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
+                            
                             NavigationLink {
                                 ModifyTaskView(task: $newTask)
                                     .navigationTitle("New Task")
+
                             } label: {
                                 Image(systemName: "plus")
                                     .foregroundStyle(.white)
-                            }
+                            }                                  
+
                         }
                     }
             }                       .ignoresSafeArea(edges: .bottom)
@@ -64,6 +70,7 @@ struct TabSwipeView: View {
         }
 
     }
+    
 }
 
 #Preview {
