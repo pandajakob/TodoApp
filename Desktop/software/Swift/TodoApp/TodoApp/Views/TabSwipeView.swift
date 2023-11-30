@@ -34,14 +34,12 @@ struct TabSwipeView: View {
                     TodoView()
                         .tabItem { Image(systemName: "sun.min")  }.tag("Today")
                         .environmentObject(taskData)
-
                     UpcommingView(showCompletedTasks: false)
                         .tabItem { Image(systemName: "arrow.up") }.tag("Upcomming")
                         .environmentObject(taskData)
                     UpcommingView(showCompletedTasks: true)
                         .tabItem { Image(systemName: "checkmark") }.tag("Completed")
                         .environmentObject(taskData)
-
                 }
                 .padding(.bottom)
                 .tabViewStyle(.page)
@@ -52,6 +50,7 @@ struct TabSwipeView: View {
                             NavigationLink {
                                 ModifyTaskView(task: $newTask)
                                     .navigationTitle("New Task")
+                                    .environmentObject(taskData)
 
                             } label: {
                                 Image(systemName: "plus")
@@ -60,10 +59,16 @@ struct TabSwipeView: View {
 
                         }
                     }
-            }                       .ignoresSafeArea(edges: .bottom)
-
+            }
+            .ignoresSafeArea(edges: .bottom)
                 .navigationBarTitleDisplayMode(.large)
                 .background(AppColor.background)
+                .onAppear {
+                    try! taskData.load()
+                }
+                .onChange(of: taskData.tasks) { _ in
+                  try! taskData.save()
+                }
                 
                 
             
