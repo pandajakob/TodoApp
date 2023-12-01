@@ -7,43 +7,45 @@
 
 import SwiftUI
 
+enum viewEnum: String, CaseIterable {
+    case Today, Upcomming, Completed
+}
 struct TabSwipeView: View {
-    @State private var picker = "Today"
+    @State private var picker = viewEnum.Today
     @StateObject private var taskData = TaskData()
-
     @State private var newTask = Task()
     var body: some View {
-        
         NavigationStack {
             VStack {
-                Picker("", selection: $picker) {
-                    Text("Today")
-                        .foregroundStyle(.white)
-                        .tag("Today")
-                    Text("Upcomming")
-                        .foregroundStyle(.white)
-                        .tag("Upcomming")
-                    Text("Completed")
-                        .foregroundStyle(.white)
-                        .tag("Completed")
+                Picker("Today", selection: $picker) {
+                    ForEach(viewEnum.allCases, id: \.self) { view in
+                        Text(view.rawValue)
+                            .foregroundStyle(.white)
+                            .tag(view)
+                    }
+                    
                 }.pickerStyle(.segmented)
                     .padding()
                 
                 
-                TabView(selection: $picker) {
+                TabView(selection: $picker,
+                        content:  {
                     TodoView()
-                        .tabItem { Image(systemName: "sun.min")  }.tag("Today")
+                        .tabItem { Image(systemName: "sun.min")  }.tag(viewEnum.Today)
                         .environmentObject(taskData)
-                    UpcommingView(showCompletedTasks: false)
-                        .tabItem { Image(systemName: "arrow.up") }.tag("Upcomming")
+                    
+                    CommingView()
+                        .tabItem { Image(systemName: "calendar")  }.tag(viewEnum.Upcomming)
                         .environmentObject(taskData)
-                    UpcommingView(showCompletedTasks: true)
-                        .tabItem { Image(systemName: "checkmark") }.tag("Completed")
+                    
+                    CompletedView()
+                        .tabItem { Image(systemName: "checkmark")  }.tag(viewEnum.Completed)
                         .environmentObject(taskData)
-                }
+
+                })
                 .padding(.bottom)
                 .tabViewStyle(.page)
-                    .navigationTitle(picker)
+                .navigationTitle(picker.rawValue)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             
@@ -61,14 +63,15 @@ struct TabSwipeView: View {
                     }
             }
             .ignoresSafeArea(edges: .bottom)
-                .navigationBarTitleDisplayMode(.large)
-                .background(AppColor.background)
-                .onAppear {
-                    try! taskData.load()
-                }
-                .onChange(of: taskData.tasks) { _ in
-                  try! taskData.save()
-                }
+            .navigationBarTitleDisplayMode(.large)
+            .background(AppColor.background)
+            .onAppear {
+                newTask = Task.init()
+                try! taskData.load()
+            }
+            .onChange(of: taskData.tasks) { _ in
+                try! taskData.save()
+            }
                 
                 
             

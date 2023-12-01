@@ -35,9 +35,7 @@ struct Task: Codable, Identifiable, Equatable {
     }
     
     var formattedDueDate: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = myDateFormat
-        return formatter.string(from: dueDate)
+        return DateFormat.dateFormatter.string(from: dueDate)
     }
     
     init() {
@@ -72,7 +70,7 @@ enum RepeatOptions: String, CaseIterable, Codable {
     case yearly = "Every Year"
 }
 
-let myDateFormat = "EEEE, d MMM, y"
+
 
 extension Task {
     static var tasks: [Task] = [

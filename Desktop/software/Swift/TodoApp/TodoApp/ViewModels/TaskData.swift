@@ -39,6 +39,22 @@ class TaskData: ObservableObject {
         tasks.remove(at: index)
     }
     
+    func removeAllTasks() {
+        tasks.removeAll()
+    }
+    func removeAllRepeated(task: Task) {
+        var deleteIndex: [Int] = []
+        for num in tasks.indices {
+            if tasks[num].description == task.description {
+                deleteIndex.append(num)
+            }
+        }
+        guard deleteIndex.isEmpty else { return }
+        
+        for index in deleteIndex {
+            tasks.remove(at: index)
+        }
+    }
     
     private var documentDirectory: URL {
         try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
