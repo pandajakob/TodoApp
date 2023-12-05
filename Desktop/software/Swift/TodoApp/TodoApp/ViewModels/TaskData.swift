@@ -7,16 +7,38 @@
 
 import Foundation
 
-struct GroupedTask: Identifiable {
-    var id = UUID()
-    var date: String
-    var tasks: [Task]
-    
-}
+
 
 class TaskData: ObservableObject {
 
     @Published var tasks: [Task] = []
+    @Published var publishedGroupedTasks: [GroupedTask] = []
+    
+
+
+    func updateGroupedTasks() {
+        
+        var groupedTasks: [GroupedTask] = []
+        
+        let filteredTasks = tasks.filter({ /*$0.isCompleted == false &&*/ !$0.isDueDateInToday && $0.dueDate > Date()})
+        
+        let sortedTasks = filteredTasks.sorted(by: {$0.dueDate < $1.dueDate})
+        
+        for task in sortedTasks {
+            
+            if let index = groupedTasks.firstIndex(where: { $0.date == task.formattedDueDate
+            }) {
+                groupedTasks[index].tasks.append(task)
+            } else {
+                groupedTasks.append(GroupedTask(date: task.formattedDueDate, tasks: [task]))
+            }
+        }
+        
+        publishedGroupedTasks = groupedTasks
+        
+        
+    }
+    
     
     func isDateInToday(date: Date) -> Bool {
         Calendar.current.isDateInToday(date)
@@ -56,25 +78,43 @@ class TaskData: ObservableObject {
         }
     }
     
-    private var documentDirectory: URL {
-        try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+    private var taskFileURL: URL {
+        do {
+            
+            let documentsDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            return documentsDirectory
+        }
+        catch {
+            fatalError("An error occurred while getting the url: \(error)")
+        }
     }
     
     private var tasksFile: URL {
-      return documentDirectory
-            .appendingPathComponent("tasks", conformingTo: .json)
+            return taskFileURL
+                .appendingPathComponent("tasks", conformingTo: .json)
 
     }
-    
+//    FileManager.default.isReadableFile(atPath: tasksFile.path) else
     func load() throws {
-        guard FileManager.default.isReadableFile(atPath: tasksFile.path) else { return }
-        let data = try Data(contentsOf: tasksFile)
-        tasks = try JSONDecoder().decode([Task].self, from: data)
+        guard let data = try? Data(contentsOf: tasksFile) else { return }
+        
+        do {
+            let savedTasks = try JSONDecoder().decode([Task].self, from: data)
+            tasks = savedTasks
+        }
+        catch {
+              fatalError("An error occurred while loading recipes: \(error)")
+            }
+        
     }
     
     func save() throws {
-        let data = try JSONEncoder().encode(tasks)
-        try data.write(to: tasksFile)
+        do {
+            let data = try JSONEncoder().encode(tasks)
+            try data.write(to: tasksFile)
+        } catch {
+            fatalError("An error occurred while saving recipes: \(error)")
+        }
     }
     
  

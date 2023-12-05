@@ -64,16 +64,27 @@ struct Task: Codable, Identifiable, Equatable {
 enum RepeatOptions: String, CaseIterable, Codable {
     case never = "Never"
     case daily = "Every Day"
+    case secondDaily = "Every 2 Days"
     case weekly = "Every Week"
     case twoweekly = "Every 2 Weeks"
-    case montly = "Every 2 Months"
+    case montly = "Every Month"
+    case twomontly = "Every 2 Months"
     case yearly = "Every Year"
 }
 
 
 
+struct GroupedTask: Identifiable {
+    var id = UUID()
+    var date: String
+    var tasks: [Task]
+    
+}
+
+
+
 extension Task {
-    static var tasks: [Task] = [
+    static var testTasks: [Task] = [
         Task(description: "Complete homework 📚", isCompleted: false, dueDate: Date().addingTimeInterval(259200), completionDate: Date(), repeatTask: .never), // Due tomorrow
            Task(description: "Read a book 📖", isCompleted: true, dueDate: Date().addingTimeInterval(172800), completionDate: Date(), repeatTask: .never), // Due in 2 days
            Task(description: "Go for a run 🏃‍♂️", isCompleted: false, dueDate: Date().addingTimeInterval(259200), completionDate: Date(), repeatTask: .never), // Due in 3 days

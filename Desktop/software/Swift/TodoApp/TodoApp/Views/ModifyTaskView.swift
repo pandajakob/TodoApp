@@ -95,7 +95,7 @@ extension ModifyTaskView {
                 dates.append(Calendar.current.date(byAdding: dateComponents, to: date) ?? Date())
             }
         case .montly:
-            for num in 1...3 {
+            for num in 1...4 {
                 var dateComponents = DateComponents()
                 dateComponents.month = num
                 dates.append(Calendar.current.date(byAdding: dateComponents, to: date) ?? Date())
@@ -105,6 +105,24 @@ extension ModifyTaskView {
                 var dateComponents = DateComponents()
                 dateComponents.year = num
                 dates.append(Calendar.current.date(byAdding: dateComponents, to: date) ?? Date())
+            }
+        case .secondDaily:
+            for num in 1...31 {
+                if num%2 == 0 {
+                    var dateComponents = DateComponents(era: 0, year: 0, month: 0, day: 3, hour: 0, minute: 0, second: 0, nanosecond: 0, weekday: 0, weekOfMonth: 0, yearForWeekOfYear: 0)
+                    dateComponents.day = num
+                    
+                    dates.append(Calendar.current.date(byAdding: dateComponents, to: date) ?? Date())
+                }
+            }
+        case .twomontly:
+            for num in 1...4 {
+                if num%2 == 0 {
+                    
+                    var dateComponents = DateComponents()
+                    dateComponents.month = num
+                    dates.append(Calendar.current.date(byAdding: dateComponents, to: date) ?? Date())
+                }
             }
         }
         return dates
