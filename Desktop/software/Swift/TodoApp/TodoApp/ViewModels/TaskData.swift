@@ -12,36 +12,30 @@ import Foundation
 class TaskData: ObservableObject {
 
     @Published var tasks: [Task] = []
-    @Published var publishedGroupedTasks: [GroupedTask] = []
+    @Published var groupedTasks: [GroupedTask] = []
     
-
 
     func updateGroupedTasks() {
         
-        var groupedTasks: [GroupedTask] = []
+        var _groupedTasks: [GroupedTask] = []
         
-        let filteredTasks = tasks.filter({ /*$0.isCompleted == false &&*/ !$0.isDueDateInToday && $0.dueDate > Date()})
+        let filteredTasks = tasks.filter({ /*$0.isCompleted == false &&*/  $0.dueDate >= Calendar.current.startOfDay(for: Date()) })
         
         let sortedTasks = filteredTasks.sorted(by: {$0.dueDate < $1.dueDate})
         
         for task in sortedTasks {
             
-            if let index = groupedTasks.firstIndex(where: { $0.date == task.formattedDueDate
+            if let index = _groupedTasks.firstIndex(where: { $0.date == task.formattedDueDate
             }) {
-                groupedTasks[index].tasks.append(task)
+                _groupedTasks[index].tasks.append(task)
             } else {
-                groupedTasks.append(GroupedTask(date: task.formattedDueDate, tasks: [task]))
+                _groupedTasks.append(GroupedTask(date: task.formattedDueDate, tasks: [task]))
             }
         }
         
-        publishedGroupedTasks = groupedTasks
+        groupedTasks = _groupedTasks
         
         
-    }
-    
-    
-    func isDateInToday(date: Date) -> Bool {
-        Calendar.current.isDateInToday(date)
     }
     
     func findIndex(task: Task) -> Int {
@@ -55,27 +49,20 @@ class TaskData: ObservableObject {
     
     func addTask(task: Task) {
         tasks.append(task)
+
     }
     func removeTask(at index: Int) {
-        
         tasks.remove(at: index)
+
     }
     
     func removeAllTasks() {
         tasks.removeAll()
+
     }
     func removeAllRepeated(task: Task) {
-        var deleteIndex: [Int] = []
-        for num in tasks.indices {
-            if tasks[num].description == task.description {
-                deleteIndex.append(num)
-            }
-        }
-        guard deleteIndex.isEmpty else { return }
         
-        for index in deleteIndex {
-            tasks.remove(at: index)
-        }
+        tasks.removeAll(where: {$0.description == task.description})
     }
     
     private var taskFileURL: URL {
@@ -115,6 +102,8 @@ class TaskData: ObservableObject {
         } catch {
             fatalError("An error occurred while saving recipes: \(error)")
         }
+        updateGroupedTasks()
+
     }
     
  

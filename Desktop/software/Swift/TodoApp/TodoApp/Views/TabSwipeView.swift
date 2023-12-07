@@ -8,10 +8,10 @@
 import SwiftUI
 
 enum viewEnum: String, CaseIterable {
-    case Today, Upcomming, Completed
+    case Tasks, Completed
 }
 struct TabSwipeView: View {
-    @State private var picker = viewEnum.Today
+    @State private var picker = viewEnum.Tasks
     @StateObject private var taskData = TaskData()
     @State private var newTask = Task()
     var body: some View {
@@ -30,14 +30,10 @@ struct TabSwipeView: View {
                 
                 TabView(selection: $picker,
                         content:  {
-                    TodoView()
-                        .tabItem { Image(systemName: "sun.min")  }.tag(viewEnum.Today)
-                        .environmentObject(taskData)
-                    
                     CommingView()
-                        .tabItem { Image(systemName: "calendar")  }.tag(viewEnum.Upcomming)
+                        .tabItem { Image(systemName: "calendar")  }.tag(viewEnum.Tasks)
                         .environmentObject(taskData)
-                    
+                   
                     CompletedView()
                         .tabItem { Image(systemName: "checkmark")  }.tag(viewEnum.Completed)
                         .environmentObject(taskData)
